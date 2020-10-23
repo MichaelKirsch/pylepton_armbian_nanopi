@@ -1,5 +1,7 @@
 # pylepton
 
+I modded the original to use less messages. It prevents that stupid "IOError: [Errno 90] Message too long" from happening
+
 Quick and dirty pure python library for capturing images from the Lepton over SPI (for example, on a Raspberry PI).
 
 Requires `cv2` and `numpy` modules, if you don't have them already. On a Debian-based system you can probably do this:
