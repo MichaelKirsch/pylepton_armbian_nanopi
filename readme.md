@@ -1,3 +1,6 @@
+# to solve spi 'Message too long' you need to do 'sudo rmmod spidev' and then 'sudo modprobe spidev bufsiz=65536' at every start. maybe put it in a startupscript
+
+
 # pylepton
 
 I modded the original to use less messages. It prevents that stupid "IOError: [Errno 90] Message too long" from happening
