@@ -65,7 +65,7 @@ class Lepton(object):
     self.__xmit_buf = np.zeros((self.__msg_size * Lepton.ROWS), dtype=np.uint8)
     self.__msg = _IOW(SPI_IOC_MAGIC, 0, self.__xmit_struct.format)
     self.__capture_buf = np.zeros((Lepton.ROWS, Lepton.VOSPI_FRAME_SIZE, 1), dtype=np.uint16)
-    self.success = False
+    self.failed = 0
 
     for i in range(Lepton.ROWS):
       self.__xmit_struct.pack_into(self.__xmit_buf, i * self.__msg_size,
@@ -149,17 +149,21 @@ class Lepton(object):
       data_buffer = np.ndarray((Lepton.ROWS, Lepton.COLS, 1), dtype=np.uint16)
     elif data_buffer.ndim < 2 or data_buffer.shape[0] < Lepton.ROWS or data_buffer.shape[1] < Lepton.COLS or data_buffer.itemsize < 2:
       raise Exception("Provided input array not large enough")
-    self.success = True
+    self.failed = 0
     while True:
       Lepton.capture_segment(self.__handle, self.__xmit_buf, self.__msg_size, self.__capture_buf[0])
       if retry_reset and (self.__capture_buf[20, 0] & 0xFF0F) != 0x1400: # make sure that this is a well-formed frame, should find line 20 here
         # Leave chip select deasserted for at least 185 ms to reset
         if debug_print:
           print("Garbage frame number reset waiting...")
-          self.success = False
         time.sleep(0.185)
+        self.failed +=1
+        if self.failed > 40:
+          print('camera is stuck. Fuck')
+          self.failed = 0
+
+
       else:
-        self.success = False
         break
 
     self.__capture_buf.byteswap(True)
