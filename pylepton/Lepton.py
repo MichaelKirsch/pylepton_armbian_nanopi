@@ -90,7 +90,6 @@ class Lepton(object):
 
     ioctl(self.__handle, SPI_IOC_RD_MAX_SPEED_HZ, struct.pack("=I", Lepton.SPEED))
     ioctl(self.__handle, SPI_IOC_WR_MAX_SPEED_HZ, struct.pack("=I", Lepton.SPEED))
-
     return self
 
   def __exit__(self, type, value, tb):
@@ -163,6 +162,7 @@ class Lepton(object):
           self.__handle.close()
           self.__init__()
           self.failed = 0
+          return data_buffer, data_buffer.sum()
       else:
         break
 
