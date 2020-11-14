@@ -158,11 +158,11 @@ class Lepton(object):
           print("Garbage frame number reset waiting...")
         time.sleep(0.185)
         self.failed +=1
-        if self.failed > 40:
+        if self.failed > 20:
           print('camera is stuck. Fuck')
+          self.__handle.close()
+          self.__init__()
           self.failed = 0
-
-
       else:
         break
 
